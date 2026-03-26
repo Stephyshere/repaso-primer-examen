@@ -1,0 +1,33 @@
+services:
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: stranger_web
+    environment:
+      API_BACKEND_URL: http://api:8080/api
+    ports:
+      - "8084:80"
+    volumes:
+      - ./frontend:/var/www/html
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: stranger_api
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    ports:
+      - "8080:8080"
+  
+  database:
+    image: postgres:latest
+    container_name: stranger
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: stranger
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./backend/sql/:/docker-entrypoint-initdb.d
